@@ -5,3 +5,16 @@ $body-bg: #f8fafc;
 $font-family-sans-serif: 'Nunito', sans-serif;
 $font-size-base: 0.9rem;
 $line-height-base: 1.6;
+
+// Brand additions
+$primary:    #0d6efd;
+$primary-600:#0b5ed7;
+$dark:       #1b1f24;
+
+// Elevation & radii
+$shadow-sm: 0 .125rem .25rem rgba(0,0,0,.075);
+$shadow:    0 .5rem 1rem rgba(0,0,0,.15);
+$radius-lg: 1rem;
+
+// Gradient brand header
+$brand-gradient: linear-gradient(135deg, #0d6efd, #0b5ed7);

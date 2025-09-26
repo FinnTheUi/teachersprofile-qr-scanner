@@ -8,13 +8,14 @@ use App\Http\Controllers\QrScanController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('landing');
 });
 
 // Admin routes (protected)
-Route::middleware(['auth'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::resource('profiles', AdminProfileController::class);
     Route::resource('offices', AdminOfficeController::class);
+    Route::get('profiles/{profile}/download-qr', [AdminProfileController::class, 'downloadQr'])->name('admin.profiles.download-qr');
 });
 
 // Public QR scanner
