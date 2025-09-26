@@ -27,3 +27,22 @@ Route::get('/profile/{id}', [ProfileController::class, 'show'])->name('profile.s
 
 // Auth routes
 Auth::routes();
+
+// Dashboard routes
+Route::middleware(['auth'])->group(function () {
+    // Common dashboard redirect
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'redirect'])->name('home');
+    
+    // Teacher routes
+    Route::middleware(['teacher'])->prefix('teacher')->group(function () {
+        Route::get('/dashboard', [App\Http\Controllers\Teacher\DashboardController::class, 'index'])->name('teacher.dashboard');
+        Route::get('/profile', [App\Http\Controllers\Teacher\ProfileController::class, 'edit'])->name('teacher.profile.edit');
+        Route::put('/profile', [App\Http\Controllers\Teacher\ProfileController::class, 'update'])->name('teacher.profile.update');
+    });
+    
+    // Admin routes
+    Route::middleware(['admin'])->prefix('admin')->group(function () {
+        Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
+        Route::put('/users/{user}/toggle-status', [App\Http\Controllers\Admin\UserController::class, 'toggleStatus'])->name('admin.users.toggle-status');
+    });
+});

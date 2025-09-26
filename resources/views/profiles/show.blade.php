@@ -1,14 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow">
-                <div class="card-header text-white" style="background: linear-gradient(135deg, #0d6efd, #0b5ed7)">
-                    <h4 class="mb-0">Teacher Profile</h4>
-                </div>
-                <div class="card-body">
+<div class="profile-section-bg">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="glass-card">
+                    <div class="card-header-custom text-white text-center py-4">
+                        <h3 class="mb-0">Teacher Profile</h3>
+                    </div>
+                    <div class="card-body p-4">
                     <div class="text-center mb-4">
                         <div class="position-relative d-inline-block">
                             <img src="{{ $profile->profile_picture ? asset('storage/' . $profile->profile_picture) : asset('images/default-avatar.svg') }}"
@@ -107,21 +108,86 @@
 
 @push('styles')
 <style>
-    .card {
-        border-radius: 15px;
+    .profile-section-bg {
+        background: url('{{ asset("images/lnu-background.jpg") }}') center/cover;
+        min-height: 100vh;
+        position: relative;
+    }
+
+    .profile-section-bg::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(13, 110, 253, 0.85), rgba(11, 94, 215, 0.85));
+        backdrop-filter: blur(1px);
+    }
+
+    .container {
+        position: relative;
+        z-index: 1;
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
         overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
+
+    .card-header-custom {
+        background: rgba(13, 110, 253, 0.1);
+        backdrop-filter: blur(5px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
     .profile-section {
-        background: #f8f9fa;
+        background: rgba(255, 255, 255, 0.5);
         padding: 1.5rem;
-        border-radius: 10px;
+        border-radius: 15px;
         height: 100%;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+
+    .profile-section:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
     .profile-section h5 {
         color: #0d6efd;
+        font-weight: 600;
     }
+
     .profile-section p {
         margin-bottom: 0;
+        color: #2c3e50;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+        background: linear-gradient(135deg, #0b5ed7, #084298);
+    }
+
+    .rounded-circle {
+        border: 4px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 </style>
 @endpush
