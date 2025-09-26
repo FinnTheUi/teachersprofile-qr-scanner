@@ -6,12 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Profile;
 use App\Models\Office;
 use App\Models\User;
-use BaconQrCode\Encoder\QrCode;
-use BaconQrCode\Renderer\ImageRenderer;
-use BaconQrCode\Renderer\RendererStyle\RendererStyle;
-use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class ProfileController extends Controller
 {
@@ -61,16 +58,20 @@ class ProfileController extends Controller
 
         $profile = Profile::create($validated);
 
-        // Generate QR code
-        $renderer = new ImageRenderer(
-            new RendererStyle(400),
-            new SvgImageBackEnd()
-        );
-        $qrCode = new QrCode("teacher:{$profile->id}");
-        $qrImage = $renderer->render($qrCode);
-
-        // Store QR code
-        Storage::disk('public')->put("qrcodes/teacher-{$profile->id}.svg", $qrImage);
+        // Generate QR code using goqr.me API (PNG)
+        $data = "teacher:{$profile->id}";
+        $query = http_build_query([
+            'data' => $data,
+            'size' => '400x400',
+            'format' => 'png',
+        ]);
+        $url = "https://api.qrserver.com/v1/create-qr-code/?$query";
+        $imageContents = @file_get_contents($url);
+        if ($imageContents === false) {
+            return redirect()->route('admin.profiles.index')
+                ->with('error', 'Failed to generate QR code. The goqr.me API may be unavailable.');
+        }
+        Storage::disk('public')->put("qrcodes/teacher-{$profile->id}.png", $imageContents);
 
         return redirect()->route('admin.profiles.index')
             ->with('success', 'Profile created successfully');
@@ -134,11 +135,10 @@ class ProfileController extends Controller
      */
     public function downloadQr(Profile $profile)
     {
-        $path = "qrcodes/teacher-{$profile->id}.svg";
+        $path = "qrcodes/teacher-{$profile->id}.png";
         if (!Storage::disk('public')->exists($path)) {
             abort(404);
         }
-
-        return Storage::disk('public')->download($path, "teacher-{$profile->id}-qr.svg");
+        return response()->download(storage_path("app/public/{$path}"), "teacher-{$profile->id}-qr.png");
     }
 }

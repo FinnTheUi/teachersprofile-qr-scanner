@@ -13,11 +13,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create default admin user
-        User::create([
-            'name' => 'Admin',
-            'email' => 'admin@lnu.edu.ph',
-            'password' => Hash::make('admin123'), // Change this in production!
-            'role' => 'admin',
+        // Call the sample data seeder which includes admin user and offices
+        $this->call([
+            SampleDataSeeder::class,
         ]);
     }
+}

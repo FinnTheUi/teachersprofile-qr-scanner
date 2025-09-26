@@ -45,7 +45,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Recent Users</h5>
-                    <a href="{{ route('admin.profiles.index') }}" class="btn btn-sm btn-primary">View All</a>
+
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -92,7 +92,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Recent Profiles</h5>
-                    <a href="{{ route('admin.profiles.index') }}" class="btn btn-sm btn-primary">View All</a>
+
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -134,7 +134,7 @@
 <style>
     .stats-card {
         background: white;
-        border-radius: 15px;
+
         padding: 1.5rem;
         display: flex;
         align-items: center;

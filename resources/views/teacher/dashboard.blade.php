@@ -25,10 +25,16 @@
                     <div class="qr-container mb-3">
                         {!! QrCode::size(200)->generate(route('profile.show', $profile->id)) !!}
                     </div>
-                    <a href="{{ route('admin.profiles.download-qr', $profile->id) }}" class="btn btn-outline-primary">
-                        <i class="fas fa-download me-2"></i>Download QR Code
+                    <a href="{{ route('teacher.download-qr') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-download me-2"></i>Download My QR Code
                     </a>
                 </div>
+            </div>
+            <!-- Scan QR Button -->
+            <div class="d-grid mt-4">
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#scanQrModal">
+                    <i class="fas fa-qrcode me-2"></i>Scan QR
+                </button>
             </div>
         </div>
 
@@ -64,6 +70,37 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scan QR Modal -->
+<div class="modal fade" id="scanQrModal" tabindex="-1" aria-labelledby="scanQrModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="scanQrModalLabel"><i class="fas fa-qrcode me-2"></i>Scan QR Code</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="scan-form-section">
+                    <form id="scanQrForm" action="{{ route('scan.qr') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="qr_image_modal" class="form-label">Upload QR Code Image</label>
+                            <input type="file" class="form-control" id="qr_image_modal" name="qr_image" accept="image/jpeg,image/png" required>
+                            <div class="form-text">Accepted formats: JPG, PNG (max 2MB)</div>
+                        </div>
+                        <div id="scan-error" class="alert alert-danger d-none"></div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-magnifying-glass me-2"></i>Scan & View Profile
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div id="scan-result-section" class="d-none"></div>
             </div>
         </div>
     </div>
@@ -115,5 +152,46 @@
         font-weight: 500;
     }
 </style>
+@endpush
+
+@push('scripts')
+<script>
+$(function() {
+    // Reset modal on open/close
+    $('#scanQrModal').on('show.bs.modal', function() {
+        $('#scan-form-section').show();
+        $('#scan-result-section').addClass('d-none').html('');
+        $('#scan-error').addClass('d-none').text('');
+        $('#scanQrForm')[0].reset();
+    });
+    // AJAX form submit
+    $('#scanQrForm').on('submit', function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        $('#scan-error').addClass('d-none').text('');
+        $.ajax({
+            url: $(this).attr('action'),
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            success: function(data) {
+                // Expect HTML of the profile card
+                $('#scan-form-section').hide();
+                $('#scan-result-section').removeClass('d-none').html(data);
+            },
+            error: function(xhr) {
+                let msg = 'Unable to read QR code. Please try again with a clearer image.';
+                if(xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+                    let errors = xhr.responseJSON.errors;
+                    msg = Object.values(errors).map(arr => arr.join('<br>')).join('<br>');
+                }
+                $('#scan-error').removeClass('d-none').html(msg);
+            }
+        });
+    });
+});
+</script>
 @endpush
 @endsection

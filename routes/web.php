@@ -12,11 +12,7 @@ Route::get('/', function () {
 });
 
 // Admin routes (protected)
-Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
-    Route::resource('profiles', AdminProfileController::class);
-    Route::resource('offices', AdminOfficeController::class);
-    Route::get('profiles/{profile}/download-qr', [AdminProfileController::class, 'downloadQr'])->name('admin.profiles.download-qr');
-});
+
 
 // Public QR scanner
 Route::get('/scan', [QrScanController::class, 'showForm'])->name('scan.form');
@@ -34,15 +30,35 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'redirect'])->name('home');
     
     // Teacher routes
-    Route::middleware(['teacher'])->prefix('teacher')->group(function () {
-        Route::get('/dashboard', [App\Http\Controllers\Teacher\DashboardController::class, 'index'])->name('teacher.dashboard');
-        Route::get('/profile', [App\Http\Controllers\Teacher\ProfileController::class, 'edit'])->name('teacher.profile.edit');
-        Route::put('/profile', [App\Http\Controllers\Teacher\ProfileController::class, 'update'])->name('teacher.profile.update');
+    Route::prefix('teacher')->middleware(['auth'])->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Teacher\DashboardController::class, 'index'])->name('teacher.dashboard');
+        Route::get('/profile', [\App\Http\Controllers\Teacher\ProfileController::class, 'edit'])->name('teacher.profile.edit');
+        Route::put('/profile', [\App\Http\Controllers\Teacher\ProfileController::class, 'update'])->name('teacher.profile.update');
+        Route::get('/download-qr', [\App\Http\Controllers\Teacher\ProfileController::class, 'downloadQr'])->name('teacher.download-qr');
     });
     
     // Admin routes
     Route::middleware(['admin'])->prefix('admin')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
         Route::put('/users/{user}/toggle-status', [App\Http\Controllers\Admin\UserController::class, 'toggleStatus'])->name('admin.users.toggle-status');
+        Route::resource('profiles', AdminProfileController::class)->names([
+            'index' => 'admin.profiles.index',
+            'create' => 'admin.profiles.create',
+            'store' => 'admin.profiles.store',
+            'show' => 'admin.profiles.show',
+            'edit' => 'admin.profiles.edit',
+            'update' => 'admin.profiles.update',
+            'destroy' => 'admin.profiles.destroy'
+        ]);
+        Route::resource('offices', AdminOfficeController::class)->names([
+            'index' => 'admin.offices.index',
+            'create' => 'admin.offices.create',
+            'store' => 'admin.offices.store',
+            'show' => 'admin.offices.show',
+            'edit' => 'admin.offices.edit',
+            'update' => 'admin.offices.update',
+            'destroy' => 'admin.offices.destroy'
+        ]);
+        Route::get('profiles/{profile}/download-qr', [AdminProfileController::class, 'downloadQr'])->name('admin.profiles.download-qr');
     });
 });

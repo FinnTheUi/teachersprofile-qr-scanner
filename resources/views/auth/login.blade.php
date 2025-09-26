@@ -16,8 +16,6 @@
                 <div class="auth-card">
                     <form method="POST" action="{{ route('login') }}">
                             @csrf
-
-                            @csrf
                             <div class="mb-3">
                                 <input id="email" type="email" 
                                     class="form-control form-control-lg @error('email') is-invalid @enderror" 

@@ -28,7 +28,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/teacher/dashboard';
 
     /**
      * Create a new controller instance.
@@ -63,11 +63,25 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'role' => 'teacher', // Force role
             'password' => Hash::make($data['password']),
+            'role' => 'teacher', // Automatically set as teacher
         ]);
+
+        // Create an empty profile for the teacher
+        $user->profile()->create([
+            'office_id' => 1, // Default to first office
+            'specialization' => '',
+            'educational_background' => '',
+            'researches' => '',
+            'subjects_taught' => '',
+            'contact_number' => '',
+            'course' => '',
+            'social_links' => []
+        ]);
+
+        return $user;
     }
 }

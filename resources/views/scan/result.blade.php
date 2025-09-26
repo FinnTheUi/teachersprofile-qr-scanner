@@ -1,6 +1,4 @@
-@extends('layouts.app')
 
-@section('content')
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-8">
@@ -93,19 +91,12 @@
                         @endif
                     </div>
 
-                    <div class="text-center mt-4">
-                        <a href="{{ route('scan.form') }}" class="btn btn-outline-primary">
-                            <i class="fas fa-qrcode me-2"></i> Scan Another QR
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-@endsection
 
-@push('styles')
 <style>
     .card {
         border-radius: 15px;
@@ -124,4 +115,3 @@
         margin-bottom: 0;
     }
 </style>
-@endpush

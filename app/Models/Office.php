@@ -18,6 +18,15 @@ class Office extends Model
     ];
 
     /**
+     * Get the office name.
+     * This accessor allows using $office->name in views
+     */
+    public function getNameAttribute()
+    {
+        return $this->office_name;
+    }
+
+    /**
      * Get the profiles for the office.
      */
     public function profiles(): HasMany
